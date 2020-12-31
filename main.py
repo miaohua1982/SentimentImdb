@@ -401,29 +401,29 @@ def train(args):
     if args.model == 'lstm':
         classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, \
                                  rnn_hidden_dim=args.rnn_hidden_dim, rnn_layers=args.rnn_layers, embedding_weights=word2vec, \
-                                 classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind(),dropout=args.drop_out)
+                                 classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=args.drop_out)
     
     elif args.model == 'fast':
         classifier = FastTextClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, embedding_weights=word2vec, \
-                                        classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind())
+                                        classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind())
    
     elif args.model == 'gru':
         classifier = GruClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, \
                                  rnn_hidden_dim=args.rnn_hidden_dim, rnn_layers=args.rnn_layers, embedding_weights=word2vec, \
-                                 classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind(),dropout=args.drop_out)
+                                 classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=args.drop_out)
     elif args.model == 'transformer_enc':
         classifier = TransformerClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, \
                                  ff_hidden=args.ff_hidden, max_seq_len=args.seq_max_len, heads=args.heads, enc_layers=args.enc_layers, embedding_weights=word2vec, \
-                                 classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind(), dropout=args.drop_out)
+                                 classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=args.drop_out)
     elif args.model == 'bert':
         classifier = BertClassifier(vocab_len=len(tokenizer._words_vocab), hidden_dim=args.ff_hidden, num_layers=args.rnn_layers, embedding_dim=args.embedding_size, embedding_weights=word2vec, \
-                                    classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind(), dropout=args.drop_out)
+                                    classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=args.drop_out)
     elif args.model == 'adbert':
         classifier = AdBertClassifier(hidden_dim=args.ff_hidden, num_layers=args.rnn_layers, bert_model=args.bert_model, \
-                                    classes_num=args.classes_num, padding_idx=tokenizer.get_mask_ind(), dropout=args.drop_out)
+                                    classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=args.drop_out)
     else:
         classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, classes_num=args.classes_num, out_channels=args.ff_hidden,\
-                                   embedding_weights=word2vec, filter_size=[3,4,5], padding_idx=tokenizer.get_mask_ind())
+                                   embedding_weights=word2vec, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
 
     # load classifier weights if needed
     if args.load_model:

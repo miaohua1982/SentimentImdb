@@ -38,7 +38,6 @@ class BaseTokenize(object):
     def get_end_ind(self):
         return self._words_vocab.get_seq_end_ind()
 
-
     def get_words_vocab(self):
         return self._words_vocab
 
