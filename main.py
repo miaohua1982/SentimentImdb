@@ -32,7 +32,7 @@ def args_parser():
     parser.add_argument('-c', '--cuda', default=False, help='use gpu', action='store_true')
     parser.add_argument('-lr','--learning_rate', default=1e-3, type=float, help='set learning rate for model')
     parser.add_argument('-bs','--batch_size', default=64, type=int, help='batch size')
-    parser.add_argument('-e', '--epochs', default=7, type=int, help='traning epochs')
+    parser.add_argument('-e', '--epochs', default=5, type=int, help='traning epochs')
     parser.add_argument('-es','--early_stopping_criteria', default=3, type=int, help='early stopping to torelant when acc is down')
     parser.add_argument('-em','--embedding_size', default=100, type=int, help='word embedding size')
     parser.add_argument('-rd','--rnn_hidden_dim', default=256, type=int, help='rnn(lstm, gnu...) hidden size')
@@ -65,7 +65,7 @@ running_args = Namespace(dataset_path="/home/miaohua/Documents/myfavor/pytorch-s
                  seed=1337,
                  learning_rate=1e-3,
                  batch_size=64,
-                 num_epochs=7,
+                 num_epochs=5,
                  heads=8,
                  enc_layers=6,
                  ff_hidden=300,
