@@ -31,3 +31,41 @@ def args_parser():
     parser.add_argument('-bm', '--bert_model', default='bert-base-uncased', type=str, help='pretrained bert model name(default is bert-base-uncased')
 
     return parser
+
+
+def set_args(user_args, running_args):
+    if user_args.dataset_path is not None:
+        running_args.dataset_path = user_args.dataset_path   
+ 
+    if user_args.glove_file_path is not None:
+        running_args.glove_file_path = user_args.glove_file_path
+
+    if user_args.model_path is not None:
+        running_args.model_path = user_args.model_path
+
+    if user_args.vect_file_path is not None:
+        running_args.vect_file_path = user_args.vect_file_path
+
+    running_args.heads = user_args.heads
+    running_args.enc_layers = user_args.enc_layers
+    running_args.ff_hidden = user_args.ff_hidden
+    running_args.seq_max_len = user_args.seq_max_len
+    running_args.classes_num = user_args.classes_num
+    running_args.model = user_args.model
+    running_args.tokenizer = user_args.tokenizer
+    running_args.cuda = user_args.cuda
+    running_args.learning_rate = user_args.learning_rate
+    running_args.batch_size = user_args.batch_size
+    running_args.num_epochs = user_args.epochs
+    running_args.early_stopping_criteria = user_args.early_stopping_criteria
+    running_args.embedding_size = user_args.embedding_size
+    running_args.rnn_hidden_dim = user_args.rnn_hidden_dim
+    running_args.rnn_layers = user_args.rnn_layers
+    running_args.drop_out = user_args.drop_out
+    running_args.tolerate_err = user_args.tolerate_err
+    running_args.decay_count = user_args.decay_count
+    running_args.load_model = user_args.load_model
+    running_args.train = user_args.train
+    running_args.test = user_args.test
+
+    return running_args

@@ -1,4 +1,5 @@
 from argparser import set_args, args_parser
+from argparse import Namespace
 from Trainer import Trainer
 from Tester import Tester
 

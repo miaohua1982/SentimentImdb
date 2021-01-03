@@ -33,16 +33,16 @@ class Tester(object):
     
     def pre_test(self):
         # log
-        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to test', args.model, 'model')    
+        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to test', self._args.model, 'model')    
         # set random
         set_seed_everywhere(self._args.seed, self._args.cuda)
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load test dataset imdb')    
-        sentiment_ds = load_imdb_data_all(os.path.join(args.dataset_path,'neg'), os.path.join(args.dataset_path,'pos'))
+        sentiment_ds = load_imdb_data_all(os.path.join(self._args.dataset_path,'neg'), os.path.join(self._args.dataset_path,'pos'))
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load test dataset imdb')
         # setup vectorizer object
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load vectorizer object')
-        with open(args.vect_file_path, 'rb') as vf:
+        with open(self._args.vect_file_path, 'rb') as vf:
             vectorizer = pickle.load(vf)
         tokenizer = vectorizer.get_tokenizer()
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load vectorizer object')
@@ -52,24 +52,24 @@ class Tester(object):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup dataset')
 
         # setup model
-        if args.model == 'lstm':
-            classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, rnn_hidden_dim=args.rnn_hidden_dim, rnn_layers=args.rnn_layers, classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=args.drop_out)
+        if self._args.model == 'lstm':
+            classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=self._args.drop_out)
         elif args.model == 'fast':
-            classifier = FastTextClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind())
+            classifier = FastTextClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind())
         elif args.model == 'gru':
-            classifier = GruClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, rnn_hidden_dim=args.rnn_hidden_dim, rnn_layers=args.rnn_layers, classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=args.drop_out)
+            classifier = GruClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=self._args.drop_out)
         elif args.model == 'transformer_enc':
-            classifier = TransformerClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, ff_hidden=args.ff_hidden, max_seq_len=args.seq_max_len, heads=args.heads, enc_layers=args.enc_layers, classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=args.drop_out)
+            classifier = TransformerClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, ff_hidden=self._args.ff_hidden, max_seq_len=self._args.seq_max_len, heads=self._args.heads, enc_layers=self._args.enc_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=self._args.drop_out)
         elif args.model == 'bert':
-            classifier = BertClassifier(vocab_len=len(tokenizer._words_vocab), hidden_dim=args.ff_hidden, num_layers=args.rnn_layers, embedding_dim=args.embedding_size, classes_num=args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=args.drop_out)
+            classifier = BertClassifier(vocab_len=len(tokenizer._words_vocab), hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=self._args.drop_out)
         elif args.model == 'adbert':
-            classifier = AdBertClassifier(hidden_dim=args.ff_hidden, num_layers=args.rnn_layers, bert_model=args.bert_model, classes_num=args.classes_num, dropout=args.drop_out)
+            classifier = AdBertClassifier(hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, bert_model=self._args.bert_model, classes_num=self._args.classes_num, dropout=self._args.drop_out)
         else:
-            classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, classes_num=args.classes_num, out_channels=args.ff_hidden, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
+            classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, out_channels=self._args.ff_hidden, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
 
         # load classifier weights if needed
-        classifier.load_state_dict(torch.load(args.model_path))
-        self._classifier = classifier.to('cuda:0' if args.cuda else 'cpu')
+        classifier.load_state_dict(torch.load(self._args.model_path))
+        self._classifier = classifier.to('cuda:0' if self._args.cuda else 'cpu')
         self._dataset = dataset
  
     def test(self):
@@ -98,7 +98,7 @@ class Tester(object):
         running_acc = 0.
         self._classifier.eval()
         test_bar.reset()
-        device = 'cuda:0' if args.cuda else 'cpu'
+        device = 'cuda:0' if self._args.cuda else 'cpu'
         
         for batch_index, batch_data in enumerate(self._test_ds):
             # data
