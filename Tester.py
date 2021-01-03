@@ -54,15 +54,15 @@ class Tester(object):
         # setup model
         if self._args.model == 'lstm':
             classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=self._args.drop_out)
-        elif args.model == 'fast':
+        elif self._args.model == 'fast':
             classifier = FastTextClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind())
-        elif args.model == 'gru':
+        elif self._args.model == 'gru':
             classifier = GruClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=self._args.drop_out)
-        elif args.model == 'transformer_enc':
+        elif self._args.model == 'transformer_enc':
             classifier = TransformerClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, ff_hidden=self._args.ff_hidden, max_seq_len=self._args.seq_max_len, heads=self._args.heads, enc_layers=self._args.enc_layers, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=self._args.drop_out)
-        elif args.model == 'bert':
+        elif self._args.model == 'bert':
             classifier = BertClassifier(vocab_len=len(tokenizer._words_vocab), hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(), dropout=self._args.drop_out)
-        elif args.model == 'adbert':
+        elif self._args.model == 'adbert':
             classifier = AdBertClassifier(hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, bert_model=self._args.bert_model, classes_num=self._args.classes_num, dropout=self._args.drop_out)
         else:
             classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, out_channels=self._args.ff_hidden, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
@@ -75,20 +75,17 @@ class Tester(object):
     def test(self):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to test....................')
         try:
-            epoch_bar = tqdm(desc='testing routine', total=self._args.num_epochs, position=0)
-            for epoch_index in range(1):
-                # do test
-                test_loss, test_acc = self.test_one_epoch()
-                print('The test dataset has loss %.3f, acc %.3f' % (test_loss, test_acc)) 
-                # update progress bar
-                epoch_bar.update()
+            test_loss, test_acc = self.test_one_epoch()
+            print('The test dataset has loss %.3f, acc %.3f' % (test_loss, test_acc)) 
         except KeyboardInterrupt:
             print("Exiting test loop")
+        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to test....................')
+    
     
     def test_one_epoch(self):
         # Iterate over validate dataset
-        dataset.set_split('test')
-        self._test_ds = DataLoader(dataset=dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
+        self._dataset.set_split('test')
+        self._test_ds = DataLoader(dataset=self._dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
         # loss
         loss_func = nn.CrossEntropyLoss() 
         # test bar
@@ -103,12 +100,10 @@ class Tester(object):
         for batch_index, batch_data in enumerate(self._test_ds):
             # data
             x_data, x_source_len, target_y = batch_data
-
-            # setp 0.0 sort data by lens
             x_data, x_source_len, target_y = self.sort_by_len(x_data, x_source_len, target_y)
             
             # compute the output
-            y_pred = classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
+            y_pred = self._classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
             y_pred = y_pred.squeeze()
             # compute the loss
             loss = loss_func(y_pred, target_y.to(device))
@@ -120,6 +115,6 @@ class Tester(object):
         
             test_bar.set_postfix(loss=running_loss, acc=running_acc)
             test_bar.update()
-            test_bar.refresh()  # something may not update last position
+            #test_bar.refresh()  # something may not update last position
 
         return running_loss, running_acc

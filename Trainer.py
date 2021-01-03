@@ -108,7 +108,7 @@ class Trainer(object):
         elif self._args.model == 'adbert':
             classifier = AdBertClassifier(hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, bert_model=self._args.bert_model, classes_num=self._args.classes_num, dropout=self._args.drop_out)
         else:
-            classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=args.embedding_size, classes_num=self._args.classes_num, out_channels=self._args.ff_hidden, embedding_weights=word2vec, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
+            classifier = CnnClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, classes_num=self._args.classes_num, out_channels=self._args.ff_hidden, embedding_weights=word2vec, filter_size=[3,4,5], padding_idx=tokenizer.get_pad_ind())
 
         # load classifier weights if needed
         if self._args.load_model:
@@ -120,6 +120,7 @@ class Trainer(object):
     def train(self):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to train....................')
         try:
+            valid_losses = []
             epoch_bar = tqdm(desc='training routine', total=self._args.num_epochs, position=0)
             for epoch_index in range(self._args.num_epochs):
                 # train
@@ -127,12 +128,13 @@ class Trainer(object):
                 print('The train dataset has loss %.3f, acc %.3f' % (cur_train_loss, cur_train_acc))
                 # validate
                 cur_valid_loss, cur_valid_acc = self.valid_one_epoch(epoch_index)
+                valid_losses.append(cur_valid_loss)
                 print('The valid dataset has loss %.3f, acc %.3f' % (cur_valid_loss, cur_valid_acc))
                 # update progress bar
                 epoch_bar.update()
             
                 # check train state
-                check_train_state(cur_valid_loss)
+                self.check_train_state(valid_losses)
                 # maybe update lr
                 #scheduler.step(train_state['val_loss'][-1])
                 # maybe early stop
@@ -153,8 +155,8 @@ class Trainer(object):
 
     def train_one_epoch(self, epoch_index):
         # Iterate over training dataset
-        dataset.set_split('train')
-        self._train_ds = DataLoader(dataset=dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
+        self._dataset.set_split('train')
+        self._train_ds = DataLoader(dataset=self._dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
         # loss
         #loss_func = nn.BCEWithLogitsLoss()
         loss_func = nn.CrossEntropyLoss()
@@ -188,8 +190,8 @@ class Trainer(object):
             # step 4. use loss to produce gradients
             loss.backward()
 
-            # step 5. use optimizer to take gradient step
-            optimizer.step()
+            # step 5. use _ to take gradient step
+            self._optimizer.step()
             
             # compute the accuracy
             acc_t = compute_accuracy_multi(y_pred, target_y.to(device))
@@ -203,8 +205,8 @@ class Trainer(object):
 
     def valid_one_epoch(self, epoch_index):
         # Iterate over validate dataset
-        dataset.set_split('valid')
-        self._valid_ds = DataLoader(dataset=dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
+        self._dataset.set_split('valid')
+        self._valid_ds = DataLoader(dataset=self._dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
         # loss
         loss_func = nn.CrossEntropyLoss() 
         # val bar
@@ -224,7 +226,7 @@ class Trainer(object):
             x_data, x_source_len, target_y = self.sort_by_len(x_data, x_source_len, target_y)
             
             # compute the output
-            y_pred = classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
+            y_pred = self._classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
             y_pred = y_pred.squeeze()
             # compute the loss
             loss = loss_func(y_pred, target_y.to(device))
@@ -243,8 +245,8 @@ class Trainer(object):
 
     def test_one_epoch(self):
         # Iterate over validate dataset
-        dataset.set_split('test')
-        self._test_ds = DataLoader(dataset=dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
+        self._dataset.set_split('test')
+        self._test_ds = DataLoader(dataset=self._dataset, batch_size=self._args.batch_size, shuffle=True, drop_last=True)
         # loss
         loss_func = nn.CrossEntropyLoss() 
         # test bar
@@ -264,7 +266,7 @@ class Trainer(object):
             x_data, x_source_len, target_y = self.sort_by_len(x_data, x_source_len, target_y)
             
             # compute the output
-            y_pred = classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
+            y_pred = self._classifier(x_data=x_data.to(device), x_len=x_source_len.to(device))
             y_pred = y_pred.squeeze()
             # compute the loss
             loss = loss_func(y_pred, target_y.to(device))
