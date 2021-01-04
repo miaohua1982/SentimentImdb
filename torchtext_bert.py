@@ -10,8 +10,8 @@ from BertClassifier import AdBertClassifier
 from Helper import compute_accuracy_multi
 
 
-args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/.data",
-                 model_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/gpu/SentimentImdb/model_storage/model_pre_bert.pth",
+args = Namespace(dataset_path="/home/miaohua/Documents/myfavor/pytorch-sentiment-analysis/.data",
+                 model_path="./model_storage/model_torchtext_pre_bert.pth",
                  tokenizer='spacy',
                  bert_model='bert-base-uncased',
                  cuda=False,

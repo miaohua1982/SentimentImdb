@@ -31,8 +31,8 @@ class AdBertClassifier(nn.Module):
     def __init__(self, hidden_dim, num_layers, bert_model='bert-base-uncased', classes_num=1, dropout=0.5, weight_path=None, config=None):
         super(AdBertClassifier, self).__init__()
         
-        #self._bert = BertModel.from_pretrained(bert_model)
-        self._bert = BertModel.from_pretrained('../../bert_pretrained/pytorch_model.bin', config='../../bert_pretrained/config.json')
+        self._bert = BertModel.from_pretrained(bert_model)
+        #self._bert = BertModel.from_pretrained('../../bert_pretrained/pytorch_model.bin', config='../../bert_pretrained/config.json')
         embedding_dim = self._bert.config.to_dict()['hidden_size']
         self._gru = nn.GRU(input_size=embedding_dim, hidden_size=hidden_dim, num_layers=num_layers, batch_first=True, dropout=dropout, bidirectional=True)
         self._classifier = nn.Linear(hidden_dim*2, classes_num)

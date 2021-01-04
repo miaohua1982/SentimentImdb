@@ -2,6 +2,7 @@ from argparser import set_args, args_parser
 from argparse import Namespace
 from Trainer import Trainer
 from Tester import Tester
+from TorchTextTrainer import TorchTextTrainer
 
 running_args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/.data/imdb/aclImdb/train",
                  glove_file_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/.vector_cache/glove.6B.100d.txt",
@@ -27,6 +28,7 @@ running_args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-se
                  drop_out=0.1,
                  tolerate_err=1e-4,
                  decay_count=3,
+                 torchtext=False,
                  load_model=False,
                  train=False,
                  test=False)
@@ -39,7 +41,10 @@ if __name__ == '__main__':
 
     if args.train:
         print('exec training routine.......................................')
-        trainer = Trainer(args)
+        if args.torchtext:
+            trainer = TorchTextTrainer(args)
+        else:
+            trainer = Trainer(args)
         trainer.pre_train()
         trainer.train()
         trainer.after_train()
@@ -50,5 +55,3 @@ if __name__ == '__main__':
         tester = Tester(args)
         tester.pre_test()
         tester.test()
-
-

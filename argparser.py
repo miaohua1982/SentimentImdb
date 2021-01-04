@@ -29,6 +29,7 @@ def args_parser():
     parser.add_argument('-cn','--classes_num', default=2, type=int, help='number of classes(default is 2)')
     parser.add_argument('-ml','--seq_max_len', default=512, type=int, help='number of classes(default is 512)')
     parser.add_argument('-bm', '--bert_model', default='bert-base-uncased', type=str, help='pretrained bert model name(default is bert-base-uncased')
+    parser.add_argument('-tt', '--torchtext', default=False, help='set program to train mode', action='store_true')
 
     return parser
 
@@ -67,5 +68,6 @@ def set_args(user_args, running_args):
     running_args.load_model = user_args.load_model
     running_args.train = user_args.train
     running_args.test = user_args.test
+    running_args.torchtext = user_args.torchtext
 
     return running_args

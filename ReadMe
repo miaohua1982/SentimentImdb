@@ -13,7 +13,9 @@ python main.py --train --model cnn --model_path model_storage/model_cnn.pth --to
 python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256
 
 #training command line for adbert
-python main.py --train --model adbert --model_path model_storage/model_adbert.pth --tokenizer adbert -em 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2
+python main.py --train --model adbert --model_path model_storage/model_adbert.pth --tokenizer adbert -em 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /home/miaohua/Documents/myfavor/pytorch-sentiment-analysis/.data
+#use torchtext for adbert
+python main.py --train --torchtext --model adbert --model_path model_storage/model_adbert.pth --tokenizer adbert -em 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /home/miaohua/Documents/myfavor/pytorch-sentiment-analysis/.data
 
 #training command line for transformer_enc
 python main.py --train --model transformer_enc --model_path model_storage/model_transformer_enc.pth --tokenizer spacy --embedding_size 100 --drop_out 0.1 --cuda -e 4 --enc_layers 6
