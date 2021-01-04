@@ -2,8 +2,18 @@ A demo for NLP sentiment by dataset imdb using pytorch framework
 Rightnow, I just realize 7 models: lstm, gru, fasttext, cnn, bert, adbert, transformer_enc
 
 
+#training command line for fasttext
+python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer spacy --embedding_size 100
+#testing command line for fasttext
+python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer spacy --embedding_size 100
+
+#training command line for cnn classifier
+python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256
+#testing command line for cnn classifier
+python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256
+
 #training command line for adbert
-python main.py --train --model adbert --model_path model_storage/model_adbert.pth --tokenizer adbert -em 768 --ff_hidden 256 --drop_out 0.25
+python main.py --train --model adbert --model_path model_storage/model_adbert.pth --tokenizer adbert -em 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2
 
 #training command line for transformer_enc
-python main.py --train --model transformer_enc --model_path model_storage/model_transformer_enc.pth --tokenizer spacy --ff_hidden 256 --drop_out 0.1
+python main.py --train --model transformer_enc --model_path model_storage/model_transformer_enc.pth --tokenizer spacy --embedding_size 100 --drop_out 0.1 --cuda -e 4 --enc_layers 6

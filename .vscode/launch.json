@@ -5,12 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: torchtext_bert.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+        },
+        {
             "name": "Python: 当前文件",
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args":["--train", "--model", "transformer_enc", "--model_path", "model_storage/model_transformer_enc.pth", "--tokenizer", "spacy", "--drop_out", "0.1"]
-
+            "args": [
+                "--train",
+                "--model",
+                "transformer_enc",
+                "--model_path",
+                "model_storage/model_transformer_enc.pth",
+                "--tokenizer",
+                "spacy",
+                "--ff_hidden",
+                "256",
+                "--drop_out",
+                "0.1"
+            ]
         }
     ]
 }
