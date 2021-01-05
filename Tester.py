@@ -16,10 +16,8 @@ from TransformerClassifier import TransformerClassifier
 from BertClassifier import BertClassifier, AdBertClassifier
 from SentimentDataset import SentimentDataset
 
-from Vectorizer import SentimentVectorizer
-
 from Tokenize import BaseTokenize, SpacyTokenize, BertTokenize, AdBertTokenize
-from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, update_train_state, make_train_state, make_word_embedding
+from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, make_word_embedding
 
 class Tester(object):
     def __init__(self, args):
@@ -38,17 +36,16 @@ class Tester(object):
         set_seed_everywhere(self._args.seed, self._args.cuda)
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load test dataset imdb')    
-        sentiment_ds = load_imdb_data_all(os.path.join(self._args.dataset_path,'neg'), os.path.join(self._args.dataset_path,'pos'))
+        test_ds = load_imdb_data_helper(self._args.dataset_path, 'test')
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load test dataset imdb')
-        # setup vectorizer object
-        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load vectorizer object')
-        with open(self._args.vect_file_path, 'rb') as vf:
-            vectorizer = pickle.load(vf)
-        tokenizer = vectorizer.get_tokenizer()
+        # setup tokenizer object
+        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load tokenizer object')
+        with open(self._args.tokenizer_dump_path, 'rb') as vf:
+            tokenizer = pickle.load(vf)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load vectorizer object')
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup dataset')
-        dataset = SentimentDataset(sentiment_ds, vectorizer)
+        dataset = SentimentDataset(tokenizer=tokenizer, test_ds=test_ds)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup dataset')
 
         # setup model

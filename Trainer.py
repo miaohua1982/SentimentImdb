@@ -16,10 +16,8 @@ from TransformerClassifier import TransformerClassifier
 from BertClassifier import BertClassifier, AdBertClassifier
 from SentimentDataset import SentimentDataset
 
-from Vectorizer import SentimentVectorizer
-
 from Tokenize import BaseTokenize, SpacyTokenize, BertTokenize, AdBertTokenize
-from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, update_train_state, make_train_state, make_word_embedding
+from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, make_word_embedding
 
 class Trainer(object):
     def __init__(self, args):
@@ -58,18 +56,18 @@ class Trainer(object):
         set_seed_everywhere(self._args.seed, self._args.cuda)
         # load dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load imdb data')
-        sentiment_ds = load_imdb_data_all(os.path.join(self._args.dataset_path,'neg'), os.path.join(self._args.dataset_path,'pos'))
+        train_ds, valid_ds, test_ds = load_imdb_data_all(self._args.dataset_path)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load imdb data')
         # load pretrained weights
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to load pretrained weights')
         if self._args.tokenizer == 'bert':
             words2ind, pretrained_weights = load_bert_word2vec(self._args.bert_model)
-        else:
+        elif self._args.tokenizer != 'adbert':
             words2ind, pretrained_weights = load_glove_word2vec(self._args.glove_file_path)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load pretrained weights')
-        # setup vectorizer
-        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup vectorizer')
+        
         # setup tokenizer
+        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup tokenizer')
         if self._args.tokenizer == 'spacy':
             tokenizer = SpacyTokenize('en_core_web_sm')
         elif self._args.tokenizer == 'bert':
@@ -78,17 +76,20 @@ class Trainer(object):
             tokenizer = AdBertTokenize(self._args.bert_model)
         else:
             tokenizer = BaseTokenize()
-        vectorizer = SentimentVectorizer.from_dataframe(sentiment_ds[sentiment_ds.split=='train'], tokenizer)
-        with open(self._args.vect_file_path, 'wb') as vf:
-            pickle.dump(vectorizer, vf)
-        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup vectorizer')
+        # to build vocab
+        tokenizer.build_vocab(train_ds)
+        with open(self._args.tokenizer_dump_path, 'wb') as vf:
+            pickle.dump(tokenizer, vf)
+        print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup tokenizer')
+
         # make word vector from pretrained weights
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to build wordvec from pretrained weights')
-        word2vec = make_word_embedding(words2ind, pretrained_weights, tokenizer._words_vocab)
+        if self._args.tokenizer != 'adbert':
+            word2vec = make_word_embedding(words2ind, pretrained_weights, tokenizer._words_vocab)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to make word embedding weights')
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup dataset')
-        dataset = SentimentDataset(sentiment_ds, vectorizer)
+        dataset = SentimentDataset(tokenizer, train_ds, valid_ds, test_ds)
         # #1# we use shorter length or the memory will be out of usage in attention computation
         # #2# the bert model has max sequence length is 512
         if self._args.model == 'transformer_enc' or self._args.model == 'adbert':
@@ -96,7 +97,7 @@ class Trainer(object):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup dataset')
         # setup model
         if self._args.model == 'lstm':
-            classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, embedding_weights=word2vec, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=args.drop_out)
+            classifier = LstmClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, rnn_hidden_dim=self._args.rnn_hidden_dim, rnn_layers=self._args.rnn_layers, embedding_weights=word2vec, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind(),dropout=self._args.drop_out)
         elif self._args.model == 'fast':
             classifier = FastTextClassifier(vocab_len=len(tokenizer._words_vocab), embedding_dim=self._args.embedding_size, embedding_weights=word2vec, classes_num=self._args.classes_num, padding_idx=tokenizer.get_pad_ind())
         elif self._args.model == 'gru':

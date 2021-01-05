@@ -1,22 +1,23 @@
 from torch.utils.data import Dataset, DataLoader
 
 class SentimentDataset(Dataset):
-    def __init__(self, sentiment_df, vectorizer):
-        self._train_df = sentiment_df[sentiment_df.split=='train']
-        self._train_df_size = self._train_df.shape[0]
+    def __init__(self, tokenizer, train_ds=None, valid_ds=None, test_ds=None):
+        if train_ds is not None:
+            self._train_df = train_ds
+            self._train_df_size = self._train_df.shape[0]
         
-        self._val_df = sentiment_df[sentiment_df.split=='val']
-        self._val_df_size = self._val_df.shape[0]
+        if valid_ds is not None:
+            self._val_df = valid_ds
+            self._val_df_size = self._val_df.shape[0]
         
-        self._test_df = sentiment_df[sentiment_df.split=='test']
-        self._test_df_size = self._test_df.shape[0]
+        if test_ds is not None:
+            self._test_df = test_ds
+            self._test_df_size = self._test_df.shape[0]
     
-        self._vectorizer = vectorizer
+        self._tokenizer = tokenizer
         
-        self._max_length = sentiment_df.sentiment.apply(lambda s: len(vectorizer.get_tokenizer().tokenizer(s))).max()
-        
-        self.set_split('train')
-        
+        self._max_length = train_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
+                
     def set_split(self,split='train'):
         if split == 'train':
             self._target_df = self._train_df
@@ -32,7 +33,7 @@ class SentimentDataset(Dataset):
         return self._target_size
     
     def __getitem__(self, ind):
-        source_vec, source_len = self._vectorizer.vectorize(self._target_df.iloc[ind].sentiment, self._max_length)
+        source_vec, source_len = self._tokenizer.vectorize(self._target_df.iloc[ind].sentiment, self._max_length)
         return source_vec, source_len, self._target_df.iloc[ind].flag
     
     def get_num_batches(self, batch_size):

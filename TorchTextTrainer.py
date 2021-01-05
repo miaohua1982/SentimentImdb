@@ -39,7 +39,7 @@ class TorchTextTrainer(object):
         optimizer = optim.Adam(self._classifier.parameters(), lr=self._args.learning_rate)#, weight_decay=0.00001)
         for i in range(self._args.num_epochs):
             train_loss, train_acc = self.train_one_epoch(optimizer, i)
-            validate_loss, validate_acc = self.validate_one_epoch(i)
+            validate_loss, validate_acc = self.valid_one_epoch(i)
             print('%d epoch train loss:%.3f, acc:%.3f, val loss:%.3f, acc:%.3f' % (i, train_loss, train_acc, validate_loss, validate_acc))
             print('-'*60)
 

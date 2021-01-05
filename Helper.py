@@ -22,7 +22,7 @@ def load_glove_word2vec(glove_file_path):
 
 def load_bert_word2vec(bert_model='bert-base-uncased'):
     bert = BertModel.from_pretrained(bert_model)
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    tokenizer = BertTokenizer.from_pretrained(bert_model)
 
     return tokenizer.vocab, bert.embeddings.word_embeddings.weight
 
@@ -53,24 +53,39 @@ def load_imdb_data(imdb_path):
 
     return ds
 
-def load_imdb_data_all(imdb_neg_path, imdb_pos_path, train_percent=0.7, test_percent=0.15, val_percent=0.15):
+def load_imdb_data_helper(imdb_path, stage='train'):
+    # train & valid ds
+    imdb_neg_path = os.path.join(imdb_path, stage, 'neg')
+    imdb_pos_path = os.path.join(imdb_path, stage, 'pos')
     neg_ds = load_imdb_data(imdb_neg_path)
     pos_ds = load_imdb_data(imdb_pos_path)
 
     all_ds = pd.concat([neg_ds, pos_ds], axis=0)
-    all_ds = all_ds.sample(frac=1).reset_index(drop=True)
+    all_ds = all_ds.sample(frac=1).reset_index(drop=True)  # shuffle
+
+    return all_ds
+
+def load_imdb_data_all(imdb_path, train_percent=0.9, val_percent=0.1):
+    # train & valid ds
+    all_ds = load_imdb_data_helper(imdb_path, 'train')
     ds_count = all_ds.shape[0]
     
     def split(row_id):
         if row_id < int(ds_count*train_percent):
             return 'train'
-        elif row_id < int(ds_count*(train_percent+test_percent)):
-            return 'test'
         else:
             return 'val'
+    
     all_ds['split'] = all_ds.apply(lambda r: split(r.name), axis=1)
+    train_ds = all_ds[all_ds.split=='train']
+    valid_ds = all_ds[all_ds.split=='val']
+    
+    # test
+    test_ds = load_imdb_data_helper(imdb_path, 'test')
+    test_ds['split'] = 'test'
 
-    return all_ds
+    return train_ds, valid_ds, test_ds
+    
 
 def make_word_embedding(words2ind, pretrained_word2vec, words_vocab):
     word2vec = torch.zeros(len(words_vocab), len(pretrained_word2vec[0]))
@@ -103,27 +118,4 @@ def set_seed_everywhere(seed, cuda):
     torch.manual_seed(seed)
     if cuda:
         torch.cuda.manual_seed_all(seed)
-
-def make_train_state():
-    return {'train_loss':[],'train_acc':[],'val_loss':[],'val_acc':[],\
-            'early_stop':False, 'epoch_index':-1, 'decay_count':0}
-
-def update_train_state(args, classifier, train_state):
-    # save once at least
-    if train_state['epoch_index'] == 0:
-        torch.save(classifier.state_dict(), args.model_path)
-    else:
-        val_loss_last = train_state['val_loss'][-1]
-        val_loss_lm = train_state['val_loss'][-2]
-        # loss gets worse
-        if val_loss_last>val_loss_lm or abs(val_loss_last-val_loss_lm)<args.tolerate_err:
-            train_state['decay_count'] += 1
-            if train_state['decay_count'] >= args.decay_count:
-                torch.save(classifier.state_dict(), args.model_path)
-                train_state['early_stop'] = True
-        else:
-            train_state['decay_count'] = 0
-            train_state['early_stop'] = False
-
-    return train_state
 

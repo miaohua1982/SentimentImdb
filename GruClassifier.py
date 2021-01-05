@@ -31,7 +31,7 @@ class GruClassifier(nn.Module):
 
         packed_data = pack_padded_sequence(embed_data, x_len, batch_first=True)
 
-        output, (hn, cn) = self.lstm(packed_data)
+        output, hn = self.gru(packed_data)
 
         if self._bidirectional: 
             inter_vec = torch.cat([hn[-2,:,:], hn[-1,:,:]], dim=1)

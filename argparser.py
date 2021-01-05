@@ -6,7 +6,7 @@ def args_parser():
     parser.add_argument('-d', '--dataset_path', type=str, help='train/val/test dataset')
     parser.add_argument('-g', '--glove_file_path',type=str, help='glove weights file path')
     parser.add_argument('-m', '--model_path', type=str, help='model file save&load path')
-    parser.add_argument('-v', '--vect_file_path', type=str, help='vectorizer object file save&load path')
+    parser.add_argument('-td', '--tokenizer_dump_path', type=str, help='tokenizer object file save&load path')
     parser.add_argument('-c', '--cuda', default=False, help='use gpu', action='store_true')
     parser.add_argument('-lr','--learning_rate', default=1e-3, type=float, help='set learning rate for model')
     parser.add_argument('-bs','--batch_size', default=64, type=int, help='batch size')
@@ -44,8 +44,8 @@ def set_args(user_args, running_args):
     if user_args.model_path is not None:
         running_args.model_path = user_args.model_path
 
-    if user_args.vect_file_path is not None:
-        running_args.vect_file_path = user_args.vect_file_path
+    if user_args.tokenizer_dump_path is not None:
+        running_args.tokenizer_dump_path = user_args.tokenizer_dump_path
 
     running_args.heads = user_args.heads
     running_args.enc_layers = user_args.enc_layers
