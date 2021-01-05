@@ -7,7 +7,6 @@ def args_parser():
     parser.add_argument('-g', '--glove_file_path',type=str, help='glove weights file path')
     parser.add_argument('-m', '--model_path', type=str, help='model file save&load path')
     parser.add_argument('-td', '--tokenizer_dump_path', type=str, help='tokenizer object file save&load path')
-    parser.add_argument('-c', '--cuda', default=False, help='use gpu', action='store_true')
     parser.add_argument('-lr','--learning_rate', default=1e-3, type=float, help='set learning rate for model')
     parser.add_argument('-bs','--batch_size', default=64, type=int, help='batch size')
     parser.add_argument('-e', '--epochs', default=5, type=int, help='traning epochs')
@@ -54,7 +53,6 @@ def set_args(user_args, running_args):
     running_args.classes_num = user_args.classes_num
     running_args.model = user_args.model
     running_args.tokenizer = user_args.tokenizer
-    running_args.cuda = user_args.cuda
     running_args.learning_rate = user_args.learning_rate
     running_args.batch_size = user_args.batch_size
     running_args.num_epochs = user_args.epochs

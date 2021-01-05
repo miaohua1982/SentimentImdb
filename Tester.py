@@ -17,7 +17,7 @@ from BertClassifier import BertClassifier, AdBertClassifier
 from SentimentDataset import SentimentDataset
 
 from Tokenize import BaseTokenize, SpacyTokenize, BertTokenize, AdBertTokenize
-from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, make_word_embedding
+from Helper import load_glove_word2vec, load_bert_word2vec, load_imdb_data_all, sort_by_len, set_seed_everywhere, compute_accuracy, compute_accuracy_multi, make_word_embedding,load_imdb_data_helper
 
 class Tester(object):
     def __init__(self, args):

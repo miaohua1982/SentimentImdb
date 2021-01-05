@@ -28,8 +28,8 @@ class GruClassifier(nn.Module):
 
     def forward(self, x_data, x_len):
         embed_data = F.dropout(self.embedding(x_data), p=self._dropout)
-
-        packed_data = pack_padded_sequence(embed_data, x_len, batch_first=True)
+        # lengths should be cpu tensor for torch 1.7~
+        packed_data = pack_padded_sequence(embed_data, x_len.cpu(), batch_first=True)
 
         output, hn = self.gru(packed_data)
 

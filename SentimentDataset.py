@@ -16,8 +16,11 @@ class SentimentDataset(Dataset):
     
         self._tokenizer = tokenizer
         
-        self._max_length = train_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
-                
+        if train_ds is not None:
+            self._max_length = train_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
+        else:
+            self._max_length = test_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
+            
     def set_split(self,split='train'):
         if split == 'train':
             self._target_df = self._train_df

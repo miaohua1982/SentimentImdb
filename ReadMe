@@ -3,21 +3,25 @@ Rightnow, I just realize 7 models: lstm, gru, fasttext, cnn, bert, adbert, trans
 
 
 #training command line for fasttext
-python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer spacy --embedding_size 100
+python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/data/aclImdb
 #testing command line for fasttext
-python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer spacy --embedding_size 100
+python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/data/aclImdb
 
 #training command line for cnn classifier
-python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256
-#testing command line for cnn classifier
-python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256
+python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb
+#testing command line for cnn classifier(0.894)
+python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb
 
 #training command line lstm
-python main.py --train --model lstm --model_path model_storage/model_lstm.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/myfavor/nlp/.data/imdb/aclImdb
-
+python main.py --train --model lstm --model_path model_storage/model_lstm.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
+#testing command line for lstm(0.858)
+python main.py --test --model lstm --load_model --model_path model_storage/model_lstm.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 --rnn_layers 2 -d /root/data/aclImdb
 
 #training command line for gru
-python main.py --train --model gru --model_path model_storage/model_gru.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/myfavor/nlp/.data/imdb/aclImdb
+python main.py --train --model gru --model_path model_storage/model_gru.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
+#testing command line for gru(0.855)
+python main.py --test --model gru --load_model --model_path model_storage/model_gru.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 --rnn_layers 2 -d /root/data/aclImdb
+
 
 #use bert tokenizer & pretrained weights
 python main.py --train --model bert --model_path model_storage/model_bert.pth --tokenizer bert -em 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data

@@ -1,3 +1,4 @@
+import torch
 from argparser import set_args, args_parser
 from argparse import Namespace
 from Trainer import Trainer
@@ -11,7 +12,7 @@ running_args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-se
                  model='lstm',
                  tokenizer='spacy',
                  bert_model='bert-base-uncased',
-                 cuda=False,
+                 cuda=torch.cuda.is_available(),
                  seed=1337,
                  learning_rate=1e-3,
                  batch_size=64,
