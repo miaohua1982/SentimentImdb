@@ -44,6 +44,9 @@ class TorchTextTrainer(object):
             print('-'*60)
 
     def after_train(self):
+        # save model
+        torch.save(self._classifier.state_dict(), self._args.model_path)
+        # do test
         test_loss, test_acc = self.test_classifier()
         print('Train loss:%.3f, acc:%.3f' % (test_loss, test_acc))
         print('.'*60)
@@ -92,7 +95,7 @@ class TorchTextTrainer(object):
         return running_loss, running_acc
 
     def valid_one_epoch(self, epoch):
-        device = 'cuda:0' if args.cuda else 'cpu'
+        device = 'cuda:0' if self._args.cuda else 'cpu'
         # Iterate over training dataset
         dataset = self._valid_iterator
         # loss
@@ -103,7 +106,7 @@ class TorchTextTrainer(object):
 
         running_loss = 0.0
         running_acc = 0.0
-        classifier.eval()
+        self._classifier.eval()
         validate_bar.reset()
 
         for batch_index, batch_data in enumerate(dataset):
@@ -111,7 +114,7 @@ class TorchTextTrainer(object):
             # step 0. get data
             x_data, target_y = batch_data.text, batch_data.label
             # step 1. compute the output
-            y_pred = classifier(x_data=x_data)
+            y_pred = self._classifier(x_data=x_data)
             y_pred = y_pred.squeeze()
             # step 2. compute the loss
             loss = loss_func(y_pred, target_y)
@@ -147,7 +150,7 @@ class TorchTextTrainer(object):
             # step 0. get data
             x_data, target_y = batch_data.text, batch_data.label
             # step 1. compute the output
-            y_pred = classifier(x_data=x_data)
+            y_pred = self._classifier(x_data=x_data)
             y_pred = y_pred.squeeze()
             # step 2. compute the loss
             loss = loss_func(y_pred, target_y)

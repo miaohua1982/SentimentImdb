@@ -61,7 +61,7 @@ class TorchTextTester(object):
             # step 0. get data
             x_data, target_y = batch_data.text, batch_data.label
             # step 1. compute the output
-            y_pred = classifier(x_data=x_data)
+            y_pred = self._classifier(x_data=x_data)
             y_pred = y_pred.squeeze()
             # step 2. compute the loss
             loss = loss_func(y_pred, target_y)

@@ -55,7 +55,7 @@ if __name__ == '__main__':
         print('exec testing routine........................................')
         assert args.load_model==True, 'when testing, load_model must be True'
         if args.torchtext:
-            trainer = TorchTextTester(args)
+            tester = TorchTextTester(args)
         else:
             tester = Tester(args)
         tester.pre_test()

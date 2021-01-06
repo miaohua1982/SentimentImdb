@@ -17,23 +17,25 @@ python main.py --train --model cnn --model_path model_storage/model_cnn.pth --to
 python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb
 
 #training command line lstm
-python main.py --train --model lstm --model_path model_storage/model_lstm.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
+python main.py --train --model lstm --model_path model_storage/model_lstm.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 128 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
 #testing command line for lstm(0.858)
 python main.py --test --model lstm --load_model --model_path model_storage/model_lstm.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 --rnn_layers 2 -d /root/data/aclImdb
 
 #training command line for gru
-python main.py --train --model gru --model_path model_storage/model_gru.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 64 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
+python main.py --train --model gru --model_path model_storage/model_gru.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --ff_hidden 256 --drop_out 0.5 -bs 128 --rnn_layers 2 -d /root/data/aclImdb --embedding_size 100
 #testing command line for gru(0.855)
 python main.py --test --model gru --load_model --model_path model_storage/model_gru.pth --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 --rnn_layers 2 -d /root/data/aclImdb
 
 
-#use bert tokenizer & pretrained weights
-python main.py --train --model bert --model_path model_storage/model_bert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data
+#use bert tokenizer & pretrained weights(with max seq lengths=512, batch_size=128)
+python main.py --train --model bert --model_path model_storage/model_bert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data -e 2
+#testing command for bert(0.882)
 python main.py --test --model bert --model_path model_storage/model_bert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data
 
 #use torchtext for adbert
-python main.py --train --torchtext --model adbert --model_path model_storage/model_adbert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer adbert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data
-python main.py --test --torchtext --model adbert --model_path model_storage/model_adbert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer adbert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data
+python main.py --train --torchtext --model adbert --model_path model_storage/model_adbert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer adbert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data -e 3
+#testing command for adbert(0.922)
+python main.py --test --torchtext --model adbert --load_model --model_path model_storage/model_adbert.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer adbert --embedding_size 768 --ff_hidden 256 --drop_out 0.25 -bs 128 --rnn_layers 2 -d /root/myfavor/nlp/.data
 
 #training command line for transformer_enc
 python main.py --train --model transformer_enc --model_path model_storage/model_transformer_enc.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --drop_out 0.1 --cuda -e 4 --enc_layers 6 -d /root/myfavor/nlp/.data
