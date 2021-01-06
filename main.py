@@ -4,6 +4,7 @@ from argparse import Namespace
 from Trainer import Trainer
 from Tester import Tester
 from TorchTextTrainer import TorchTextTrainer
+from TorchTextTester import TorchTextTester
 
 running_args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/.data/imdb/aclImdb/train",
                  glove_file_path="/root/myfavor/nlp/.vector_cache/glove.6B.100d.txt",
@@ -53,6 +54,10 @@ if __name__ == '__main__':
     if args.test:
         print('exec testing routine........................................')
         assert args.load_model==True, 'when testing, load_model must be True'
-        tester = Tester(args)
+        if args.torchtext:
+            trainer = TorchTextTester(args)
+        else:
+            tester = Tester(args)
         tester.pre_test()
         tester.test()
+        

@@ -1,5 +1,6 @@
 import argparse 
 
+
 def args_parser():
     parser = argparse.ArgumentParser()
 
@@ -31,7 +32,6 @@ def args_parser():
     parser.add_argument('-tt', '--torchtext', default=False, help='set program to train mode', action='store_true')
 
     return parser
-
 
 def set_args(user_args, running_args):
     if user_args.dataset_path is not None:

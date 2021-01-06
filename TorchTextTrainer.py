@@ -33,12 +33,12 @@ class TorchTextTrainer(object):
         self._train_iterator, self._valid_iterator, self._test_iterator = data.BucketIterator.splits((train_data, valid_data, test_data), batch_size=self._args.batch_size, device=device)
         self._classifier = AdBertClassifier(hidden_dim=self._args.ff_hidden, num_layers=self._args.rnn_layers, bert_model=self._args.bert_model, classes_num=self._args.classes_num, dropout=self._args.drop_out)
         self._classifier.to(device)
+        self._optimizer = optim.Adam(self._classifier.parameters(), lr=self._args.learning_rate)#, weight_decay=0.00001)
     
     def train(self):
         print('Start to train adbert by texttorch.................................')
-        optimizer = optim.Adam(self._classifier.parameters(), lr=self._args.learning_rate)#, weight_decay=0.00001)
         for i in range(self._args.num_epochs):
-            train_loss, train_acc = self.train_one_epoch(optimizer, i)
+            train_loss, train_acc = self.train_one_epoch(i)
             validate_loss, validate_acc = self.valid_one_epoch(i)
             print('%d epoch train loss:%.3f, acc:%.3f, val loss:%.3f, acc:%.3f' % (i, train_loss, train_acc, validate_loss, validate_acc))
             print('-'*60)
@@ -48,7 +48,7 @@ class TorchTextTrainer(object):
         print('Train loss:%.3f, acc:%.3f' % (test_loss, test_acc))
         print('.'*60)
 
-    def train_one_epoch(self, optimizer, epoch):
+    def train_one_epoch(self, epoch):
         device = 'cuda:0' if self._args.cuda else 'cpu'
         # Iterate over training dataset
         dataset = self._train_iterator
@@ -68,7 +68,7 @@ class TorchTextTrainer(object):
             # step 0. get data
             x_data, target_y = batch_data.text, batch_data.label
             # step 1. zero the gradients
-            optimizer.zero_grad()
+            self._optimizer.zero_grad()
             # step 2. compute the output
             y_pred = self._classifier(x_data=x_data)
             y_pred = y_pred.squeeze()
@@ -79,7 +79,7 @@ class TorchTextTrainer(object):
             # step 4. use loss to produce gradients
             loss.backward()
             # step 5. use optimizer to take gradient step
-            optimizer.step()
+            self._optimizer.step()
             # -----------------------------------------
             # compute the accuracy
             acc_t = compute_accuracy_multi(y_pred, target_y.to(device))
