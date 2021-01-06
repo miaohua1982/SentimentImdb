@@ -2,13 +2,17 @@ A demo for NLP sentiment by dataset imdb using pytorch framework
 Rightnow, I just realize 7 models: lstm, gru, fasttext, cnn, bert, adbert, transformer_enc
 
 
-#training command line for fasttext
-python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/data/aclImdb
-#testing command line for fasttext
-python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/data/aclImdb
+#training command line for fasttext with max seq length=512
+python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
+#testing command line for fasttext(0.877)
+python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
+
+#with bert weights it can be to 0.884
+python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
+python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
 
 #training command line for cnn classifier
-python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb
+python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -e 3 -d /root/data/aclImdb
 #testing command line for cnn classifier(0.894)
 python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb
 

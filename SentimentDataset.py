@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset, DataLoader
 
 class SentimentDataset(Dataset):
-    def __init__(self, tokenizer, train_ds=None, valid_ds=None, test_ds=None):
+    def __init__(self, tokenizer, train_ds=None, valid_ds=None, test_ds=None, max_seq_len=512):
         if train_ds is not None:
             self._train_df = train_ds
             self._train_df_size = self._train_df.shape[0]
@@ -15,11 +15,12 @@ class SentimentDataset(Dataset):
             self._test_df_size = self._test_df.shape[0]
     
         self._tokenizer = tokenizer
+        self._max_length = max_seq_len
         
-        if train_ds is not None:
-            self._max_length = train_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
-        else:
-            self._max_length = test_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
+        #if train_ds is not None:
+        #    self._max_length = train_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
+        #else:
+        #    self._max_length = test_ds.sentiment.apply(lambda s: len(tokenizer.tokenizer(s))).max()
             
     def set_split(self,split='train'):
         if split == 'train':

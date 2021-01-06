@@ -89,11 +89,9 @@ class Trainer(object):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to make word embedding weights')
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup dataset')
-        dataset = SentimentDataset(tokenizer, train_ds, valid_ds, test_ds)
         # #1# we use shorter length or the memory will be out of usage in attention computation
         # #2# the bert model has max sequence length is 512
-        if self._args.model == 'transformer_enc' or self._args.model == 'adbert':
-            dataset.set_max_len(self._args.seq_max_len)
+        dataset = SentimentDataset(tokenizer, train_ds, valid_ds, test_ds, self._args.seq_max_len)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup dataset')
         # setup model
         if self._args.model == 'lstm':
