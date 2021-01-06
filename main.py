@@ -6,10 +6,10 @@ from Tester import Tester
 from TorchTextTrainer import TorchTextTrainer
 from TorchTextTester import TorchTextTester
 
-running_args = Namespace(dataset_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/.data/imdb/aclImdb/train",
+running_args = Namespace(dataset_path="/root/myfavor/nlp/.data/imdb/aclImdb",
                  glove_file_path="/root/myfavor/nlp/.vector_cache/glove.6B.100d.txt",
-                 model_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/gpu/SentimentImdb/model_storage/model_lstm.pth",
-                 tokenizer_dump_path="/Users/miaohua/Desktop/myfavor/pytorch-sentiment-analysis/gpu/SentimentImdb/model_storage/vect_file.dmp",
+                 model_path="model_storage/model_lstm.pth",
+                 tokenizer_dump_path="model_storage/tokenizer_file.dmp",
                  model='lstm',
                  tokenizer='spacy',
                  bert_model='bert-base-uncased',
