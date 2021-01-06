@@ -11,7 +11,7 @@ python main.py --test --model fast --load_model --model_path model_storage/model
 python main.py --train --model fast --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
 python main.py --test --model fast --load_model --model_path model_storage/model_fast.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer bert --embedding_size 768 -bs 64 -d /root/myfavor/nlp/.data/imdb/aclImdb
 
-#training command line for cnn classifier
+#training command line for cnn classifier with max seq length=512
 python main.py --train --model cnn --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -e 3 -d /root/data/aclImdb
 #testing command line for cnn classifier(0.894)
 python main.py --test --model cnn --load_model --model_path model_storage/model_cnn.pth --tokenizer_dump_path model_storage/tokenizer_file.dmp --tokenizer spacy --embedding_size 100 --ff_hidden 256 -bs 64 -d /root/data/aclImdb

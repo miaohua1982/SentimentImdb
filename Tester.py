@@ -45,7 +45,9 @@ class Tester(object):
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to load vectorizer object')
         # setup dataset
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Start to setup dataset')
-        dataset = SentimentDataset(tokenizer=tokenizer, test_ds=test_ds)
+        # #1# we use shorter length or the memory will be out of usage in attention computation
+        # #2# the bert model has max sequence length is 512
+        dataset = SentimentDataset(tokenizer=tokenizer, test_ds=test_ds, max_seq_len=self._args.seq_max_len)
         print(time.strftime('%Y/%m/%d %H:%M:%S'), 'Finish to setup dataset')
 
         # setup model
