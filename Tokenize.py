@@ -50,7 +50,7 @@ class BaseTokenize(object):
         tokens_inds = self.do_vectorize(sentence)
         
         if max_vector_len<0:
-            max_vector_len = len(tokens_inds)+2  # start & end token
+            max_vector_len = len(tokens_inds) #+2  # start & end token
 
         source_rep = np.zeros(max_vector_len, dtype=np.int64)
                 
@@ -60,7 +60,7 @@ class BaseTokenize(object):
             source_rep[:len(tokens_inds)] = tokens_inds
             source_rep[len(tokens_inds):] = self.get_pad_ind()
         
-        return source_rep, len(tokens_inds)
+        return source_rep, max_vector_len if max_vector_len<len(tokens_inds) else len(tokens_inds)
 
     def get_pad_ind(self):
         return self._words_vocab.get_pad_ind()
