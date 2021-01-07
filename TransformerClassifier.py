@@ -4,7 +4,7 @@ from torch import nn
 import torch.nn.functional as F
 
 class TransformerClassifier(nn.Module):
-    def __init__(self, vocab_len, embedding_dim, ff_hidden, max_seq_len, classes_num=1, heads=8, enc_layers=6, embedding_weights=None, dropout=0.5, padding_idx=0, bidirectional=False):
+    def __init__(self, vocab_len, embedding_dim, ff_hidden, max_seq_len, classes_num=1, heads=8, enc_layers=6, embedding_weights=None, dropout=0.5, padding_idx=0, bidirectional=True):
         super(TransformerClassifier, self).__init__()
         
         self._enc = TransEncoder(vocab_len, embedding_dim, ff_hidden, max_seq_len, heads, enc_layers, embedding_weights, dropout, padding_idx)
